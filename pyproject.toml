@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "telegram-shop-bot"
+version = "0.1.0"
+description = "Telegram bot for selling digital products with Mercado Pago integration"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+python-telegram-bot = "13.15"
+mercadopago = "*"
+flask = "*"
+gunicorn = "*"
+telegram = "^0.0.1"
+python-dotenv = "^1.1.0"
+psutil = "^7.0.0"
+requests = "^2.32.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

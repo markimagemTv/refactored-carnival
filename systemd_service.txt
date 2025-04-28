@@ -1,0 +1,19 @@
+[Unit]
+Description=Telegram Bot de E-commerce
+After=network.target
+
+[Service]
+Type=simple
+User=seu-usuario
+WorkingDirectory=/opt/botatualizado
+ExecStart=/opt/botatualizado/venv/bin/python /opt/botatualizado/bot_completo.py
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=telegrambot
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONIOENCODING=UTF-8
+
+[Install]
+WantedBy=multi-user.target

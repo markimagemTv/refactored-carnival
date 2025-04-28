@@ -1,0 +1,53 @@
+{
+  "name": "Bot de Vendas Telegram",
+  "description": "Bot de e-commerce para vendas de produtos digitais via Telegram com processamento de pagamentos Mercado Pago",
+  "repository": "https://github.com/seu-usuario/botatualizado",
+  "keywords": ["python", "telegram", "bot", "ecommerce", "mercadopago", "pix"],
+  "env": {
+    "TELEGRAM_TOKEN": {
+      "description": "Token do seu bot do Telegram (obtido via BotFather)",
+      "required": true
+    },
+    "MERCADO_PAGO_TOKEN": {
+      "description": "Token de acesso do Mercado Pago para processamento de pagamentos",
+      "required": true
+    },
+    "ADMIN_ID": {
+      "description": "ID do administrador no Telegram",
+      "required": true
+    },
+    "HEROKU_APP_NAME": {
+      "description": "Nome da sua aplicação Heroku (mesmo nome que você escolheu acima)",
+      "required": true
+    },
+    "USE_HEALTH_CHECK": {
+      "description": "Ativar verificação automática de saúde do bot (recomendado)",
+      "value": "true"
+    },
+    "TZ": {
+      "description": "Fuso horário para registros de log",
+      "value": "America/Sao_Paulo"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "success_url": "/",
+  "addons": [
+    {
+      "plan": "scheduler:standard"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "python initialize_heroku.py"
+  },
+  "stack": "heroku-22"
+}

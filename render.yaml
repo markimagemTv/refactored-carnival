@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: telegram-bot
+    env: python
+    buildCommand: pip install -r requirements_render.txt
+    startCommand: python bot_completo.py
+    envVars:
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: MERCADO_PAGO_TOKEN
+        sync: false
+      - key: ADMIN_ID
+        sync: false

@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: scheduler:standard
+      as: scheduler
+
+build:
+  docker:
+    worker: Dockerfile
+
+run:
+  worker: bash run_heroku.sh
