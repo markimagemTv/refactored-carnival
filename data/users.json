@@ -1,0 +1,17 @@
+{
+  "123456789": {
+    "id": 123456789,
+    "nome": "Cliente Demo",
+    "telefone": "11999887766"
+  },
+  "1460561546": {
+    "id": 1460561546,
+    "nome": "Marques Sousa Lima",
+    "telefone": "5561995021362"
+  },
+  "7938026016": {
+    "id": 7938026016,
+    "nome": "Marcus Vinicius",
+    "telefone": "61985869706"
+  }
+}

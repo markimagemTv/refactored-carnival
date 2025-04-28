@@ -1,0 +1,122 @@
+{
+    "ATIVAR APP": [
+        {
+            "name": "⚡ QUICK PLAYER R$65",
+            "price": 65.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "📱 NINJA PLAYER R$65",
+            "price": 65.0,
+            "fields": [
+                "MAC",
+                "CHAVE OTP"
+            ]
+        },
+        {
+            "name": "📺 MEGA IPTV R$ 65",
+            "price": 65.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🧠 SMART ONE R$60",
+            "price": 60.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🎮 IBO PRO PLAYER R$50",
+            "price": 50.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "📡 IBO TV OFICIAL R$50",
+            "price": 50.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🧩 DUPLECAST R$60",
+            "price": 60.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🌐 BAY TV R$60",
+            "price": 60.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🎥 VU PLAYER R$50",
+            "price": 50.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "🔥 SUPER PLAY R$50",
+            "price": 50.0,
+            "fields": [
+                "MAC"
+            ]
+        },
+        {
+            "name": "☁️ CLOUDDY R$65",
+            "price": 65.0,
+            "fields": [
+                "E-mail",
+                "Senha do app"
+            ]
+        }
+    ],
+    "COMPRAR CRÉDITOS": [
+        {
+            "name": "⚡ FAST PLAYER (13,50und)",
+            "price": 13.5,
+            "discount": true
+        },
+        {
+            "name": "👑 GOLD PLAY (13,50und)",
+            "price": 13.5,
+            "discount": true
+        },
+        {
+            "name": "📺 EI TV (13,50und)",
+            "price": 13.5,
+            "discount": true
+        },
+        {
+            "name": "🛰️ Z TECH (13,50und)",
+            "price": 13.5,
+            "discount": true
+        },
+        {
+            "name": "🧠 GENIAL PLAY (13,50und)",
+            "price": 13.5,
+            "discount": true
+        },
+        {
+            "name": "🚀 UPPER PLAY (14,50und)",
+            "price": 14.5,
+            "discount": false
+        }
+    ],
+    "🔥 PROMOÇÕES": [
+        {
+            "name": "📺 PACOTE 10 CRÉDITOS EI TV",
+            "price": 300.0,
+            "discount": false
+        }
+    ]
+}

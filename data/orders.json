@@ -1,0 +1,38 @@
+{
+  "0a93cbc3": {
+    "id": "0a93cbc3",
+    "user_id": 1460561546,
+    "items": [
+      {
+        "name": "📺 PACOTE 10 CRÉDITOS EI TV",
+        "price": 300.0,
+        "details": {
+          "tipo": "preço fixo",
+          "discount": false
+        }
+      }
+    ],
+    "status": "pendente",
+    "payment_id": 109223614915,
+    "created_at": "2025-04-27 16:26:56"
+  },
+  "1c37d1f1": {
+    "id": "1c37d1f1",
+    "user_id": 7938026016,
+    "items": [
+      {
+        "name": "☁️ CLOUDDY R$65",
+        "price": 65.0,
+        "details": {
+          "fields": {
+            "E-mail": "truman65@uorak.com",
+            "Senha do app": "81710300"
+          }
+        }
+      }
+    ],
+    "status": "entregue",
+    "payment_id": 109666670330,
+    "created_at": "2025-04-27 16:26:56"
+  }
+}

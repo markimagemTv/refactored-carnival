@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+        }
+        .order-card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Painel Administrativo do Bot</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="true">Pedidos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">Usuários</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                <div class="mt-3 mb-3">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary" id="filter-all">Todos</button>
+                        <button type="button" class="btn btn-outline-warning" id="filter-pending">Pendentes</button>
+                        <button type="button" class="btn btn-outline-success" id="filter-paid">Pagos</button>
+                        <button type="button" class="btn btn-outline-info" id="filter-delivered">Entregues</button>
+                        <button type="button" class="btn btn-outline-danger" id="filter-cancelled">Cancelados</button>
+                    </div>
+                </div>
+                <div id="orders-container" class="row">
+                    <div class="col-12 text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderModalLabel">Detalhes do Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="order-details">
+                    <!-- Order details will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fetch orders data
+        function fetchOrders() {
+            fetch('/api/orders')
+                .then(response => response.json())
+                .then(data => {
+                    const ordersContainer = document.getElementById('orders-container');
+                    if (data.orders.length === 0) {
+                        ordersContainer.innerHTML = '<div class="col-12"><div class="alert alert-info">Nenhum pedido encontrado.</div></div>';
+                        return;
+                    }
+                    
+                    ordersContainer.innerHTML = '';
+                    data.orders.forEach(order => {
+                        const statusClass = getStatusClass(order.status);
+                        const user = order.user ? order.user.nome : 'Usuário Desconhecido';
+                        const items = order.items.map(item => item.name).join(', ');
+                        
+                        const card = document.createElement('div');
+                        card.className = `col-md-6 col-lg-4 order-card order-status-${order.status}`;
+                        card.innerHTML = `
+                            <div class="card">
+                                <div class="card-header ${statusClass.bg}">
+                                    <strong>Pedido #${order.id}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Cliente:</strong> ${user}</p>
+                                    <p><strong>Status:</strong> <span class="badge ${statusClass.badge}">${getStatusName(order.status)}</span></p>
+                                    <p><strong>Items:</strong> ${items}</p>
+                                    <button class="btn btn-sm btn-primary view-details" data-order-id="${order.id}">Ver Detalhes</button>
+                                </div>
+                            </div>
+                        `;
+                        ordersContainer.appendChild(card);
+                    });
+                    
+                    // Add event listeners to view-details buttons
+                    document.querySelectorAll('.view-details').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const orderId = this.getAttribute('data-order-id');
+                            const order = data.orders.find(o => o.id == orderId);
+                            showOrderDetails(order);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching orders:', error);
+                    document.getElementById('orders-container').innerHTML = 
+                        '<div class="col-12"><div class="alert alert-danger">Erro ao carregar pedidos. Tente novamente.</div></div>';
+                });
+        }
+        
+        // Fetch users data
+        function fetchUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    const usersTableBody = document.getElementById('users-table-body');
+                    if (data.users.length === 0) {
+                        usersTableBody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum usuário encontrado.</td></tr>';
+                        return;
+                    }
+                    
+                    usersTableBody.innerHTML = '';
+                    data.users.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.nome}</td>
+                            <td>${user.telefone}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Contatar</button>
+                            </td>
+                        `;
+                        usersTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching users:', error);
+                    document.getElementById('users-table-body').innerHTML = 
+                        '<tr><td colspan="4" class="text-center">Erro ao carregar usuários. Tente novamente.</td></tr>';
+                });
+        }
+        
+        // Show order details in modal
+        function showOrderDetails(order) {
+            const orderDetails = document.getElementById('order-details');
+            const user = order.user ? `${order.user.nome} (${order.user.telefone})` : 'Usuário Desconhecido';
+            const statusClass = getStatusClass(order.status);
+            
+            let itemsHtml = '<ul>';
+            order.items.forEach(item => {
+                itemsHtml += `<li>${item.name} - R$ ${item.price.toFixed(2)}</li>`;
+            });
+            itemsHtml += '</ul>';
+            
+            orderDetails.innerHTML = `
+                <div class="mb-3">
+                    <strong>ID do Pedido:</strong> ${order.id}
+                </div>
+                <div class="mb-3">
+                    <strong>Cliente:</strong> ${user}
+                </div>
+                <div class="mb-3">
+                    <strong>Status:</strong> <span class="badge ${statusClass.badge}">${getStatusName(order.status)}</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Items:</strong>
+                    ${itemsHtml}
+                </div>
+                <div class="mb-3">
+                    <strong>Total:</strong> R$ ${calculateTotal(order.items).toFixed(2)}
+                </div>
+            `;
+            
+            // Show the modal
+            const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+            orderModal.show();
+        }
+        
+        // Helper functions
+        function getStatusClass(status) {
+            switch (status) {
+                case 'pendente':
+                    return { bg: 'bg-warning text-dark', badge: 'bg-warning text-dark' };
+                case 'pago':
+                    return { bg: 'bg-success text-white', badge: 'bg-success' };
+                case 'entregue':
+                    return { bg: 'bg-info text-white', badge: 'bg-info' };
+                case 'cancelado':
+                    return { bg: 'bg-danger text-white', badge: 'bg-danger' };
+                default:
+                    return { bg: 'bg-secondary text-white', badge: 'bg-secondary' };
+            }
+        }
+        
+        function getStatusName(status) {
+            switch (status) {
+                case 'pendente': return 'Pendente';
+                case 'pago': return 'Pago';
+                case 'entregue': return 'Entregue';
+                case 'cancelado': return 'Cancelado';
+                default: return status;
+            }
+        }
+        
+        function calculateTotal(items) {
+            return items.reduce((sum, item) => sum + item.price, 0);
+        }
+        
+        // Filter orders
+        document.getElementById('filter-all').addEventListener('click', function() {
+            filterOrders('all');
+        });
+        
+        document.getElementById('filter-pending').addEventListener('click', function() {
+            filterOrders('pendente');
+        });
+        
+        document.getElementById('filter-paid').addEventListener('click', function() {
+            filterOrders('pago');
+        });
+        
+        document.getElementById('filter-delivered').addEventListener('click', function() {
+            filterOrders('entregue');
+        });
+        
+        document.getElementById('filter-cancelled').addEventListener('click', function() {
+            filterOrders('cancelado');
+        });
+        
+        function filterOrders(status) {
+            const orders = document.querySelectorAll('.order-card');
+            if (status === 'all') {
+                orders.forEach(order => {
+                    order.style.display = 'block';
+                });
+            } else {
+                orders.forEach(order => {
+                    if (order.classList.contains(`order-status-${status}`)) {
+                        order.style.display = 'block';
+                    } else {
+                        order.style.display = 'none';
+                    }
+                });
+            }
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchOrders();
+            fetchUsers();
+        });
+    </script>
+</body>
+</html>

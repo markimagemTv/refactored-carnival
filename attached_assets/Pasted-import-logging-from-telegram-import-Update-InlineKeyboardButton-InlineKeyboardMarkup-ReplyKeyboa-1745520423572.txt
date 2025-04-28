@@ -1,0 +1,290 @@
+import logging
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telegram.ext import (
+    Application, CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes,
+    filters, ConversationHandler
+)
+import mercadopago
+import uuid
+
+TOKEN = "7313095742:AAEuHZQD-_Kq82Vz5_6rPY6e5qYRBKO1WkE"
+MERCADO_PAGO_TOKEN = "APP_USR-1131585983401213-071122-fb361e3bc65c5f744b44395423c1db36-142857766"
+ADMIN_ID = "1460561546"  # Substitua pelo seu ID do Telegram
+
+# Inicialização
+app = Application.builder().token(TOKEN).build()
+logging.basicConfig(level=logging.INFO)
+
+# Mercado Pago
+sdk = mercadopago.SDK(MERCADO_PAGO_TOKEN)
+
+# Banco de dados simplificado
+users = {}
+carts = {}
+orders = {}
+products = {
+    "ATIVAR APP": [
+        {"name": "📱 NINJA PLAYER R$65", "price": 65.00, "fields": ["MAC", "CHAVE OTP"]},
+        {"name": "📺 MEGA IPTV R$ 65", "price": 65.00, "fields": ["MAC"]},
+        {"name": "🧠 SMART ONE R$60", "price": 60.00, "fields": ["MAC"]},
+        {"name": "🎮 IBO PRO PLAYER R$50", "price": 50.00, "fields": ["MAC"]},
+        {"name": "📡 IBO TV OFICIAL R$50", "price": 50.00, "fields": ["MAC"]},
+        {"name": "🧩 DUPLECAST R$60", "price": 50.00, "fields": ["MAC"]},
+        {"name": "🌐 BAY TV R$60", "price": 50.00, "fields": ["MAC"]},
+        {"name": "🎥 VU PLAYER R$50", "price": 50.00, "fields": ["MAC"]},
+        {"name": "🔥 SUPER PLAY R$50", "price": 50.00, "fields": ["MAC"]},
+        {"name": "☁️ CLOUDDY R$65", "price": 65.00, "fields": ["E-mail", "Senha do app"]},
+    ],
+    "COMPRAR CRÉDITOS": [
+        {"name": "⚡ FAST PLAYER (13,50und)", "price": 13.50, "discount": True},
+        {"name": "👑 GOLD PLAY (13,50und)", "price": 13.50, "discount": True},
+        {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
+        {"name": "🛰️ Z TECH (13,50und)", "price": 13.50, "discount": True},
+        {"name": "🧠 GENIAL PLAY 13,50und)", "price": 13.50, "discount": True},
+        {"name": "🚀 UPPER PLAY (14,50und)", "price": 14.50, "discount": False},
+    ]
+}
+
+
+
+
+
+
+# Teclado persistente
+main_keyboard = ReplyKeyboardMarkup([
+    ["🛍️ Iniciar Compras", "🛒 Carrinho"],
+    ["💰 Pagar Agora", "📦 Meus Pedidos"]
+], resize_keyboard=True)
+
+
+# --- Funções de Utilidade ---
+def get_cart_total(cart):
+    return sum(item['price'] for item in cart)
+
+
+def aplicar_desconto(prod, quantidade):
+    if prod.get("discount") and quantidade > 10:
+        return round(prod["price"] * quantidade * 0.95, 2)
+    return round(prod["price"] * quantidade, 2)
+
+
+# --- Comandos ---
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    chat_id = update.effective_chat.id
+    if chat_id not in users:
+        await update.message.reply_text("Olá! Para começar, informe seu nome completo:")
+        return 1
+    await update.message.reply_text("Bem-vindo de volta!", reply_markup=main_keyboard)
+
+
+async def cadastro_nome(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data['nome'] = update.message.text
+    await update.message.reply_text("Agora, envie seu telefone com DDD (ex: 11999999999):")
+    return 2
+
+
+async def cadastro_telefone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    nome = context.user_data.get("nome")
+    telefone = update.message.text
+    users[update.effective_chat.id] = {"nome": nome, "telefone": telefone}
+    await update.message.reply_text("Cadastro concluído!", reply_markup=main_keyboard)
+    return ConversationHandler.END
+
+
+# --- Menu ---
+async def menu_inicial(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("ATIVAR APP", callback_data="categoria_ATIVAR APP")],
+        [InlineKeyboardButton("COMPRAR CRÉDITOS", callback_data="categoria_COMPRAR CRÉDITOS")]
+    ]
+    await update.message.reply_text("Escolha uma categoria:", reply_markup=InlineKeyboardMarkup(keyboard))
+
+
+# --- Categorias e Produtos ---
+async def categoria(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    categoria = query.data.split("_")[1]
+    context.user_data['categoria'] = categoria
+    keyboard = []
+    for prod in products[categoria]:
+        keyboard.append([InlineKeyboardButton(prod["name"], callback_data=f"produto_{prod['name']}")])
+    await query.edit_message_text(f"Produtos da categoria *{categoria}*:", parse_mode='Markdown',
+                                  reply_markup=InlineKeyboardMarkup(keyboard))
+
+
+async def produto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    nome_produto = query.data.split("_")[1]
+    categoria = context.user_data.get("categoria")
+    produto = next((p for p in products[categoria] if p['name'] == nome_produto), None)
+    context.user_data['produto'] = produto
+
+    if categoria == "COMPRAR CRÉDITOS":
+        keyboard = [[InlineKeyboardButton(f"{i} créditos", callback_data=f"qtd_{i}")]
+                    for i in [10, 20, 30, 40, 50]]
+        await query.edit_message_text(f"Quantos créditos deseja comprar para {produto['name']}?",
+                                      reply_markup=InlineKeyboardMarkup(keyboard))
+    else:
+        context.user_data['fields'] = {}
+        await query.edit_message_text(f"Informe o valor de {produto['fields'][0]}:")
+        return 3
+
+
+async def quantidade_creditos(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    qtd = int(query.data.split("_")[1])
+    produto = context.user_data.get("produto")
+    valor = aplicar_desconto(produto, qtd)
+    item = {
+        "name": f"{produto['name']} - {qtd} créditos",
+        "price": valor
+    }
+    carts.setdefault(query.from_user.id, []).append(item)
+    await query.edit_message_text(f"{item['name']} adicionado ao carrinho por R${valor:.2f}")
+    await query.message.reply_text("Deseja continuar comprando?", reply_markup=main_keyboard)
+
+
+async def coleta_dados(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    produto = context.user_data['produto']
+    fields = produto["fields"]
+    dados = context.user_data.get("fields", {})
+    dados[fields[len(dados)]] = update.message.text
+
+    if len(dados) == len(fields):
+        item = {
+            "name": produto["name"] + " - " + ", ".join([f"{k}:{v}" for k, v in dados.items()]),
+            "price": produto["price"]
+        }
+        carts.setdefault(update.effective_chat.id, []).append(item)
+        await update.message.reply_text(f"{item['name']} adicionado ao carrinho por R${item['price']:.2f}",
+                                        reply_markup=main_keyboard)
+        return ConversationHandler.END
+    else:
+        context.user_data['fields'] = dados
+        await update.message.reply_text(f"Informe o valor de {fields[len(dados)]}:")
+        return 3
+
+
+# --- Carrinho ---
+async def ver_carrinho(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    cart = carts.get(update.effective_chat.id, [])
+    if not cart:
+        await update.message.reply_text("Seu carrinho está vazio.")
+        return
+    msg = "\n".join([f"- {item['name']} - R${item['price']:.2f}" for item in cart])
+    total = get_cart_total(cart)
+    await update.message.reply_text(f"🛒 Carrinho:\n{msg}\n\n💵 Total: R${total:.2f}")
+
+
+# --- Pagamento Mercado Pago ---
+async def pagar(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_chat.id
+    cart = carts.get(user_id, [])
+    if not cart:
+        await update.message.reply_text("Seu carrinho está vazio.")
+        return
+
+    total = get_cart_total(cart)
+    payment_data = {
+        "transaction_amount": total,
+        "description": "Pagamento Pix",
+        "payment_method_id": "pix",
+        "payer": {
+            "email": f"comprador_{user_id}@email.com"
+        }
+    }
+    payment_response = sdk.payment().create(payment_data)
+    pix_data = payment_response.get("response", {}).get("point_of_interaction", {}).get("transaction_data", {})
+    pix_code = pix_data.get("qr_code")
+    qr_image = pix_data.get("qr_code_base64")
+
+    if not pix_code:
+        await update.message.reply_text("❌ Erro ao gerar o código Pix. Tente novamente mais tarde.")
+        return
+
+    order_id = str(uuid.uuid4())[:8]
+    orders[order_id] = {"user_id": user_id, "items": cart, "status": "pendente"}
+    carts[user_id] = []
+
+    await update.message.reply_text(
+        f"✅ Pedido gerado!\n💵 Total: R${total:.2f}\n\n"
+        "📌 Copie o código abaixo e pague no seu app de banco:\n\n"
+        f"`{pix_code}`",
+        parse_mode="Markdown"
+    )
+
+    if qr_image:
+        await update.message.reply_photo(photo=f"data:image/png;base64,{qr_image}")
+
+    await app.bot.send_message(
+        ADMIN_ID,
+        f"🆕 Novo pedido #{order_id}:\nUsuário: {users[user_id]['nome']}\n"
+        f"Telefone: {users[user_id]['telefone']}\nItens:\n" +
+        "\n".join([f"- {item['name']} - R${item['price']:.2f}" for item in cart]) +
+        f"\n\n✅ Clique abaixo para marcar como entregue.",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✔️ Marcar como entregue", callback_data=f"entregue_{order_id}")]])
+    )
+
+
+# --- Admin confirma entrega ---
+async def confirmar_entrega(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    order_id = query.data.split("_")[1]
+    pedido = orders.get(order_id)
+    if not pedido:
+        await query.edit_message_text("Pedido não encontrado.")
+        return
+    pedido['status'] = 'entregue'
+    await app.bot.send_message(pedido["user_id"], f"📦 Seu pedido #{order_id} foi entregue com sucesso!")
+    await query.edit_message_text(f"✅ Pedido #{order_id} marcado como entregue.")
+
+
+# --- Pedido histórico (simples) ---
+async def meus_pedidos(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_chat.id
+    pedidos = [f"#{oid} - {o['status']}" for oid, o in orders.items() if o['user_id'] == user_id]
+    if not pedidos:
+        await update.message.reply_text("Você ainda não fez nenhum pedido.")
+    else:
+        await update.message.reply_text("Seus pedidos:\n" + "\n".join(pedidos))
+
+
+# --- Conversação Cadastro e Produto ---
+cadastro_handler = ConversationHandler(
+    entry_points=[CommandHandler("start", start)],
+    states={
+        1: [MessageHandler(filters.TEXT & ~filters.COMMAND, cadastro_nome)],
+        2: [MessageHandler(filters.TEXT & ~filters.COMMAND, cadastro_telefone)],
+    },
+    fallbacks=[]
+)
+
+produto_handler = ConversationHandler(
+    entry_points=[CallbackQueryHandler(produto, pattern="^produto_")],
+    states={
+        3: [MessageHandler(filters.TEXT & ~filters.COMMAND, coleta_dados)],
+    },
+    fallbacks=[]
+)
+
+# --- Registro de Handlers ---
+app.add_handler(cadastro_handler)
+app.add_handler(produto_handler)
+app.add_handler(CommandHandler("menu", menu_inicial))
+app.add_handler(CallbackQueryHandler(categoria, pattern="^categoria_"))
+app.add_handler(CallbackQueryHandler(quantidade_creditos, pattern="^qtd_"))
+app.add_handler(CallbackQueryHandler(confirmar_entrega, pattern="^entregue_"))
+app.add_handler(MessageHandler(filters.Regex("(?i)^🛒 Carrinho$"), ver_carrinho))
+app.add_handler(MessageHandler(filters.Regex("(?i)^🛍️ Iniciar Compras$"), menu_inicial))
+app.add_handler(MessageHandler(filters.Regex("(?i)^💰 Pagar Agora$"), pagar))
+app.add_handler(MessageHandler(filters.Regex("(?i)^📦 Meus Pedidos$"), meus_pedidos))
+
+# --- Início do Bot ---
+if __name__ == "__main__":
+    print("Bot rodando...")
+    app.run_polling()
