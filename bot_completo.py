@@ -83,8 +83,8 @@ if not ADMIN_ID:
 # Catálogo de produtos
 PRODUCT_CATALOG = {
     "ATIVAR APP": [
-        {"name": "📱 VU PLAYER R$50", "price": 50.00, "fields": ["MAC", "CHAVE OTP"]},
-        {"name": "📺 ASSIST+ R$ 65", "price": 65.00, "fields": ["MAC"]},
+        {"name": "​🆕​ VU PLAYER R$50", "price": 50.00, "fields": ["MAC", "CHAVE OTP"]},
+        {"name": "➕​ ASSIST+ R$ 65", "price": 65.00, "fields": ["MAC"]},
         {"name": "📱 NINJA PLAYER R$65", "price": 65.00, "fields": ["MAC", "CHAVE OTP"]},
         {"name": "📺 MEGA IPTV R$ 65", "price": 65.00, "fields": ["MAC"]},
         {"name": "🧠 SMART ONE R$60", "price": 60.00, "fields": ["MAC"]},
@@ -92,7 +92,7 @@ PRODUCT_CATALOG = {
         {"name": "📡 IBO TV OFICIAL R$50", "price": 50.00, "fields": ["MAC"]},
         {"name": "🧩 DUPLECAST R$60", "price": 60.00, "fields": ["MAC"]},
         {"name": "🌐 BAY TV R$60", "price": 60.00, "fields": ["MAC"]},
-        {"name": "🎥 VU PLAYER R$50", "price": 50.00, "fields": ["MAC"]},
+        {"name": "🟣​ QUICK PLAYER R$65", "price": 65.00, "fields": ["MAC"]},
         {"name": "🔥 SUPER PLAY R$50", "price": 50.00, "fields": ["MAC"]},
         {"name": "☁️ CLOUDDY R$65", "price": 65.00, "fields": ["E-mail", "Senha do app"]},
     ],
