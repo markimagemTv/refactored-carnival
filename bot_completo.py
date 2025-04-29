@@ -2103,7 +2103,7 @@ def notify_admin_new_order(context: CallbackContext, order, user):
     total = sum(item.price for item in order.items)
     
     message = (
-        f"🔔 *NOVO PEDIDO PAGO!*\n\n"
+        f"🔔 *CHEGOU UM NOVO PEDIDO!*\n\n"
         f"🧾 *Pedido #{order.id}*\n"
         f"👤 Cliente: {user.nome}\n"
         f"📱 Telefone: {user.telefone}\n"
