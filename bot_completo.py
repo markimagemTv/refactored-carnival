@@ -108,6 +108,7 @@ PRODUCT_CATALOG = {
     "🔥 PROMOÇÕES": [
         {"name": "👑 PACOTE 30 CRÉDITOS GOLD PLAY", "price": 300.00, "discount": False},
         {"name": "📺 PACOTE 30 CRÉDITOS EI TV", "price": 300.00, "discount": False},
+        {"name": "🛰️ PACOTE 20 CRÉDITOS Z TECH", "price": 200.00, "discount": False},
     ]
 }
 
