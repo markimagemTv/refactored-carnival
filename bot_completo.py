@@ -106,9 +106,7 @@ PRODUCT_CATALOG = {
         {"name": "🚀 UPPER PLAY (14,50und)", "price": 145.00, "discount": False},
     ],
     "🔥 PROMOÇÕES": [
-        {"name": "👑 PACOTE 30 CRÉDITOS GOLD PLAY", "price": 300.00, "discount": False},
         {"name": "📺 PACOTE 30 CRÉDITOS EI TV", "price": 300.00, "discount": False},
-        {"name": "🛰️ PACOTE 20 CRÉDITOS Z TECH", "price": 200.00, "discount": False},
     ]
 }
 
