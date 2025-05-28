@@ -90,7 +90,7 @@ PRODUCT_CATALOG = {
         {"name": "🧠 SMART ONE R$60", "price": 60.00, "fields": ["MAC"]},
         {"name": "🎮 IBO PRO PLAYER R$50", "price": 50.00, "fields": ["MAC"]},
         {"name": "📡 IBO TV OFICIAL R$50", "price": 50.00, "fields": ["MAC"]},
-        {"name": "🧩 DUPLECAST R$60", "price": 60.00, "fields": ["MAC"]},
+        {"name": "🧩 DUPLECAST R$60", "price": 60.00, "fields": ["MAC", "CHAVE OTP"]},
         {"name": "🌐 BAY TV R$60", "price": 60.00, "fields": ["MAC"]},
         {"name": "🟣​ QUICK PLAYER R$65", "price": 65.00, "fields": ["MAC"]},
         {"name": "🔥 SUPER PLAY R$50", "price": 50.00, "fields": ["MAC"]},
