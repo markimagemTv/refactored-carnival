@@ -86,7 +86,7 @@ PRODUCT_CATALOG = {
         {"name": "​🆕​ VU PLAYER R$50", "price": 50.00, "fields": ["MAC", "CHAVE OTP"]},
         {"name": "➕​ ASSIST+ R$ 65", "price": 65.00, "fields": ["MAC"]},
         {"name": "📱 NINJA PLAYER R$65", "price": 65.00, "fields": ["MAC", "CHAVE OTP"]},
-        {"name": "📺 MEGA IPTV R$ 65", "price": 75.00, "fields": ["MAC"]},
+        {"name": "📺 MEGA IPTV R$ 75", "price": 75.00, "fields": ["MAC"]},
         {"name": "🧠 SMART ONE R$60", "price": 60.00, "fields": ["MAC"]},
         {"name": "🎮 IBO PRO PLAYER R$50", "price": 50.00, "fields": ["MAC"]},
         {"name": "📡 IBO TV OFICIAL R$50", "price": 50.00, "fields": ["MAC"]},
