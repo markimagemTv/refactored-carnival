@@ -83,7 +83,6 @@ if not ADMIN_ID:
 # Catálogo de produtos
 PRODUCT_CATALOG = {
     "ATIVAR APP": [
-        {"name": "​🆕​ VU PLAYER R$50", "price": 50.00, "fields": ["MAC", "CHAVE OTP"]},
         {"name": "➕​ ASSIST+ R$ 65", "price": 65.00, "fields": ["MAC"]},
         {"name": "📱 NINJA PLAYER R$65", "price": 65.00, "fields": ["MAC", "CHAVE OTP"]},
         {"name": "📺 MEGA IPTV R$ 75", "price": 75.00, "fields": ["MAC"]},
@@ -104,7 +103,7 @@ PRODUCT_CATALOG = {
         {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
         {"name": "🛰️ Z TECH (13,50und)", "price": 13.50, "discount": True},
         {"name": "🧠 GENIAL PLAY (13,50und)", "price": 13.50, "discount": True},
-        {"name": "🚀 UPPER PLAY (14,50und)", "price": 145.00, "discount": False},
+        {"name": "🚀 UPPER PLAY (15,00und)", "price": 150.00, "discount": False},
     ],
     "🔥 PROMOÇÕES": [
         {"name": "📺 PACOTE 30 CRÉDITOS EI TV", "price": 300.00, "discount": False},
