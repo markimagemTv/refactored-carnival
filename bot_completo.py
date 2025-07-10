@@ -488,7 +488,7 @@ def format_cart_message(cart_items):
                 if 'fields' in item.details:
                     fields = item.details['fields']
                     if fields:
-                        fields_text = ", ".join(f"{k}: `{v}`" for k, v in fields.items())
+                        fields_text = ", ".join(f"{k}: {v}" for k, v in fields.items())
                         details += f"\n   ↳ {fields_text}"
             
             message += f"{i}. {item.name} - R${price:.2f}{details}\n"
@@ -568,7 +568,7 @@ def format_order_details(order, include_items=True):
                         
                         # Add any fields if present
                         if 'fields' in item.details and item.details['fields']:
-                            fields_text = ", ".join(f"{k}: `{v}`" for k, v in item.details['fields'].items())
+                            fields_text = ", ".join(f"{k}: {v}" for k, v in item.details['fields'].items())
                             details += f"\n   ↳ {fields_text}"
                     
                     message += f"{i}. {item.name} - R${item.price:.2f}{details}\n"
@@ -1179,8 +1179,7 @@ def collect_product_fields(update: Update, context: CallbackContext):
         )
         
         for field, value in fields_collected.items():
-            message += f"- {field}: `{value}`
-"
+            message += f"- {field}: {value}\n"
         
         keyboard = [
             [InlineKeyboardButton("🛒 Ver Carrinho", callback_data="view_cart")],
@@ -2121,7 +2120,7 @@ def notify_admin_new_order(context: CallbackContext, order, user):
             
             # Add any fields if present
             if 'fields' in item.details and item.details['fields']:
-                fields_text = ", ".join(f"{k}: `{v}`" for k, v in item.details['fields'].items())
+                fields_text = ", ".join(f"{k}: {v}" for k, v in item.details['fields'].items())
                 details += f"\n   ↳ {fields_text}"
         
         message += f"{i}. {item.name} - R${item.price:.2f}{details}\n"
@@ -4596,49 +4595,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
-
-def main():
-    updater = Updater(token=TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
-
-    # Conversa de registro
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
-        states={
-            NOME: [MessageHandler(Filters.text & ~Filters.command, handle_name)],
-            TELEFONE: [
-                MessageHandler(Filters.contact, handle_phone),
-                MessageHandler(Filters.text & ~Filters.command, handle_phone)
-            ]
-        },
-        fallbacks=[CommandHandler("cancel", cancel)],
-    )
-    dispatcher.add_handler(conv_handler)
-
-    # Handlers principais
-    dispatcher.add_handler(MessageHandler(Filters.text("🛍️ Produtos"), menu_inicial))
-    dispatcher.add_handler(MessageHandler(Filters.text("🛒 Ver Carrinho"), view_cart))
-    dispatcher.add_handler(MessageHandler(Filters.text("📋 Meus Pedidos"), list_orders))
-
-    # Callbacks para produtos e carrinho
-    dispatcher.add_handler(CallbackQueryHandler(show_category, pattern=r"^category_"))
-    dispatcher.add_handler(CallbackQueryHandler(select_product, pattern=r"^product_"))
-    dispatcher.add_handler(CallbackQueryHandler(handle_quantity, pattern=r"^qty_"))
-    dispatcher.add_handler(CallbackQueryHandler(view_cart_callback, pattern="^view_cart$"))
-    dispatcher.add_handler(CallbackQueryHandler(checkout, pattern="^checkout$"))
-    dispatcher.add_handler(CallbackQueryHandler(clear_cart, pattern="^clear_cart$"))
-    dispatcher.add_handler(CallbackQueryHandler(check_payment_status, pattern=r"^check_payment_"))
-    dispatcher.add_handler(CallbackQueryHandler(order_details, pattern=r"^order_details_"))
-    dispatcher.add_handler(CallbackQueryHandler(continue_shopping, pattern=r"^(back_to_categories|back_to_products)$"))
-
-    # Campo de produto
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, collect_product_fields))
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == "__main__":
-    main()
-
