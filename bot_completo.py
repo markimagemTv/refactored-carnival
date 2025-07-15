@@ -99,7 +99,7 @@ PRODUCT_CATALOG = {
     "COMPRAR CRÉDITOS": [
         {"name": "🎯 X SERVER PLAY (13,50und)", "price": 13.50, "discount": True},
         {"name": "⚡ FAST PLAYER (13,50und)", "price": 13.50, "discount": True},
-        {"name": "👑 GOLD PLAY (13,50und)", "price": 13.50, "discount": True},
+        {"name": "👑 GOLD PLAY (11.50und)", "price": 11.50, "discount": True},
         {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
         {"name": "🛰️ Z TECH (13,50und)", "price": 13.50, "discount": True},
         {"name": "🧠 GENIAL PLAY (13,50und)", "price": 13.50, "discount": True},
