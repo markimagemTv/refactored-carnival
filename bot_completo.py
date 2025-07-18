@@ -103,7 +103,7 @@ PRODUCT_CATALOG = {
         {"name": "⚡ FAST PLAYER (13,50und)", "price": 13.50, "discount": True},
         {"name": "👑 GOLD PLAY (13.50und)", "price": 13.50, "discount": True},
         {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
-        {"name": "🛰️ Z TECH (13,50und)", "price": 13.50, "discount": True},
+        {"name": "🛰️ Z TECH (12,50und)", "price": 12.50, "discount": False},
         {"name": "🧠 GENIAL PLAY (13,50und)", "price": 13.50, "discount": True},
         {"name": "🚀 UPPER PLAY (16,50und)", "price": 165.00, "discount": False},
     ],
