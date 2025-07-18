@@ -105,7 +105,7 @@ PRODUCT_CATALOG = {
         {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
         {"name": "🛰️ Z TECH (13,50und)", "price": 13.50, "discount": True},
         {"name": "🧠 GENIAL PLAY (13,50und)", "price": 13.50, "discount": True},
-        {"name": "🚀 UPPER PLAY (15,00und)", "price": 150.00, "discount": False},
+        {"name": "🚀 UPPER PLAY (16,50und)", "price": 165.00, "discount": False},
     ],
     "🔥 PROMOÇÕES": [
         {"name": "📺 PACOTE 30 CRÉDITOS EI TV", "price": 300.00, "discount": False},
