@@ -99,7 +99,7 @@ PRODUCT_CATALOG = {
         {"name": "☁️ CLOUDDY R$65", "price": 65.00, "fields": ["E-mail", "Senha do app"]},
     ],
     "COMPRAR CRÉDITOS": [
-        {"name": "🎯 X SERVER PLAY (13,50und)", "price": 13.50, "discount": True},
+        {"name": "🎯 X SERVER PLAY (14,50und)", "price": 14.50, "discount": False},
         {"name": "⚡ FAST PLAYER (13,50und)", "price": 13.50, "discount": True},
         {"name": "👑 GOLD PLAY (13.50und)", "price": 13.50, "discount": True},
         {"name": "📺 EI TV (13,50und)", "price": 13.50, "discount": True},
